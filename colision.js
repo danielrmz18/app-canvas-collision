@@ -82,23 +82,33 @@ class Circle {
       }
     }
   }
+
+  // Función para verificar si el mouse está sobre el círculo
+  isClicked(mouseX, mouseY) {
+    const distX = this.posX - mouseX;
+    const distY = this.posY - mouseY;
+    const distance = Math.sqrt(distX * distX + distY * distY); // Distancia entre el círculo y el mouse
+    return distance <= this.radius; // Si la distancia es menor o igual al radio, está clicado
+  }
 }
 
 // Crear un array para almacenar N círculos
 let circles = [];
 
 // Función para generar círculos aleatorios
+// Función para generar círculos aleatorios
 function generateCircles(n) {
   for (let i = 0; i < n; i++) {
     let radius = Math.random() * 30 + 20; // Radio entre 20 y 50
     let x = Math.random() * (window_width - radius * 2) + radius;
-    let y = Math.random() * (window_height - radius * 2) + radius;
-    let color = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Color aleatorio
+    let y = window_height - radius; // Posicionar el círculo cerca del borde inferior
+    let color = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`; // Color aleatorio
     let speed = Math.random() * 4 + 1; // Velocidad entre 1 y 5
     let text = `C${i + 1}`; // Etiqueta del círculo
     circles.push(new Circle(x, y, radius, color, text, speed));
   }
 }
+
 
 // Función para detectar colisiones entre todos los círculos
 function detectCollisions() {
@@ -118,6 +128,15 @@ function animate() {
   detectCollisions(); // Detectar colisiones en cada cuadro de la animación
   requestAnimationFrame(animate); // Repetir la animación
 }
+
+// Función para manejar el clic en el canvas y eliminar el círculo clicado
+canvas.addEventListener("click", function(event) {
+  const mouseX = event.clientX; // Obtener coordenada X del clic
+  const mouseY = event.clientY; // Obtener coordenada Y del clic
+  
+  // Filtrar los círculos que no fueron clicados
+  circles = circles.filter(circle => !circle.isClicked(mouseX, mouseY));
+});
 
 // Generar N círculos y comenzar la animación
 generateCircles(10); // Puedes cambiar el número de círculos aquí
